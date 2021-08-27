@@ -22,7 +22,6 @@ const Trip = () => {
                                     <Card.Text>place :</Card.Text>
                                     <Card.Text>description :</Card.Text>
                                     <Card.Text>pricePln :</Card.Text>
-                                    <Card.Text>ownerId :</Card.Text>
                                 </Card.Body>
                             </Card>
                         </Col>
