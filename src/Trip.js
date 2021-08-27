@@ -20,10 +20,18 @@ const Trip = () => {
             ],
         })
 
+        const [copyTrip] = useMutation(COPY_TRIP, {
+            refetchQueries: [
+                TRIPS_QUERY,
+                'Trips'
+            ],
+        })
+
         const {data: tripsData} = useQuery(TRIPS_QUERY)
 
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error :(</p>;
+
 
         return (
             <div>
@@ -44,6 +52,26 @@ const Trip = () => {
                     }).then(r => console.log(r))
                 }}>
                     update place
+                </Button>
+
+                <Button className="Input" variant="primary" type="submit" onClick={() => {
+                    copyTrip({
+                        variables: {
+                            trip:
+                                {
+                                    id: (Math.max(...tripsData.trips.map( trip => +trip.id)) + 1).toString(),
+                                    name: data.trip.name,
+                                    place: data.trip.place,
+                                    description: data.trip.description,
+                                    maxParticipantsCount: data.trip.maxParticipantsCount,
+                                    pricePln: data.trip.pricePln,
+                                    ownerId: data.trip.owner.id,
+                                    participantsId: []
+                                }
+                        }
+                    })
+                }}>
+                    copy trip
                 </Button>
 
                 <h2 className="Form">
@@ -127,6 +155,7 @@ const TRIP_QUERY = gql`
                 owner {
                     __typename
                     ... on User {
+                        id
                         firstName
                         surname
                         gender
@@ -161,6 +190,15 @@ const TRIPS_QUERY = gql`
 const UPDATE_PLACE = gql`
     mutation updatePlace($tripId: ID!, $newPlace: String!) {
         updatePlace(update: {id: $tripId, place: $newPlace}) {
+            tripId
+        }
+    }
+`;
+
+
+const COPY_TRIP = gql`
+    mutation addTrip($trip: TripDto!) {
+        addTrip(trip: $trip) {
             tripId
         }
     }
