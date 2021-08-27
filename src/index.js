@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {
     ApolloClient,
     InMemoryCache,
-    gql
+    ApolloProvider
 } from "@apollo/client";
 
 const client = new ApolloClient({
@@ -15,49 +15,11 @@ const client = new ApolloClient({
     cache: new InMemoryCache()
 });
 
-client
-.query({
-    query: gql`
-        query Trip {
-            trip(id: "1") {
-                __typename
-                ... on Trip {
-                    id
-                    name
-                    place
-                    description
-                    pricePln
-                    owner {
-                        __typename
-                        ... on User {
-                            firstName
-                            surname
-                            gender
-                            age
-                            email
-                        }
-                    }
-                    participants(limit: 10) {
-                        id
-                        firstName
-                        surname
-                        gender
-                        age
-                        email
-                    }
-                }
-                ... on TripNotFound {
-                    notFoundId: id
-                }
-            }
-        }
-    `
-})
-.then(result => console.log(result));
-
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+      <ApolloProvider client={client}>
+          <App />
+      </ApolloProvider>,
   </React.StrictMode>,
   document.getElementById('root')
 );
