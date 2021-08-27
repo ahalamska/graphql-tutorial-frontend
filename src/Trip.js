@@ -1,6 +1,6 @@
 import React from "react";
 import Card from 'react-bootstrap/Card';
-import {Col, Container, Row, Table} from "react-bootstrap";
+import {Col, Container, Form, Row, Table} from "react-bootstrap";
 import {gql, useQuery} from "@apollo/client";
 
 
@@ -14,6 +14,15 @@ const Trip = () => {
 
         return (
             <div>
+                Select trip Id
+                <Form.Control as="select" aria-label="select trip" id="floatingSelect"
+                              onChange={event => console.log(event.target.value)}>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </Form.Control>
+
                 <h2 className="Header">
                     {data.trip.name} ({data.trip.id})
                 </h2>
