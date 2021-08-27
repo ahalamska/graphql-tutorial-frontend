@@ -1,13 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 import Card from 'react-bootstrap/Card';
 import {Col, Container, Form, Row, Table} from "react-bootstrap";
 import {gql, useQuery} from "@apollo/client";
 
 
 const Trip = () => {
+        const [tripId, changeTripId] = useState("1")
+        const {loading, error, data} = useQuery(TRIP_QUERY,
+            {
+                variables: {tripId}
+            });
 
-        const {loading, error, data} = useQuery(TRIP_QUERY);
-        console.log(data)
+        const {data: tripsData} = useQuery(TRIPS_QUERY)
 
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error :(</p>;
@@ -16,11 +20,10 @@ const Trip = () => {
             <div>
                 Select trip Id
                 <Form.Control as="select" aria-label="select trip" id="floatingSelect"
-                              onChange={event => console.log(event.target.value)}>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
+                              onChange={event => changeTripId(event.target.value)}>
+                    {tripsData.trips.map( trip =>
+                        <option value={trip.id}>{trip.id}</option>
+                    )}
                 </Form.Control>
 
                 <h2 className="Header">
@@ -92,8 +95,8 @@ const Trip = () => {
 ;
 
 const TRIP_QUERY = gql`
-    query Trip {
-        trip(id: "1") {
+    query Trip($tripId: ID!) {
+        trip(id: $tripId) {
             __typename
             ... on Trip {
                 id
@@ -123,6 +126,14 @@ const TRIP_QUERY = gql`
             ... on TripNotFound {
                 notFoundId: id
             }
+        }
+    }
+`
+
+const TRIPS_QUERY = gql`
+    query Trips {
+        trips {
+            id
         }
     }
 `
