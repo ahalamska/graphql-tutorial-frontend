@@ -1,11 +1,13 @@
 import React, {useState} from "react";
 import Card from 'react-bootstrap/Card';
-import {Col, Container, Form, Row, Table} from "react-bootstrap";
+import {Button, Col, Container, Form, Row, Table} from "react-bootstrap";
 import {gql, useQuery} from "@apollo/client";
 
 
 const Trip = () => {
         const [tripId, changeTripId] = useState("1")
+        const [newPlace, setNewPlace] = useState("1")
+
         const {loading, error, data} = useQuery(TRIP_QUERY,
             {
                 variables: {tripId}
@@ -19,14 +21,22 @@ const Trip = () => {
         return (
             <div>
                 Select trip Id
-                <Form.Control as="select" aria-label="select trip" id="floatingSelect"
+                <Form.Control className="Input" as="select" aria-label="select trip" id="floatingSelect"
                               onChange={event => changeTripId(event.target.value)}>
-                    {tripsData.trips.map( trip =>
+                    {tripsData.trips.map(trip =>
                         <option value={trip.id}>{trip.id}</option>
                     )}
                 </Form.Control>
 
-                <h2 className="Header">
+                <Form.Control className="Input" size="lg" type="text" placeholder="New place"
+                              onChange={event => setNewPlace(event.target.value)}/>
+
+                <Button className="Input" variant="primary" type="submit" onSubmit={() => {
+                }}>
+                    update place
+                </Button>
+
+                <h2 className="Form">
                     {data.trip.name} ({data.trip.id})
                 </h2>
                 <Container fluid>
