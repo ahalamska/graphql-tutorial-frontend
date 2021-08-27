@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import Card from 'react-bootstrap/Card';
 import {Button, Col, Container, Form, Row, Table} from "react-bootstrap";
-import {gql, useQuery} from "@apollo/client";
+import {gql, useMutation, useQuery} from "@apollo/client";
 
 
 const Trip = () => {
@@ -12,6 +12,13 @@ const Trip = () => {
             {
                 variables: {tripId}
             });
+
+        const [updatePlace] = useMutation(UPDATE_PLACE, {
+            refetchQueries: [
+                TRIP_QUERY,
+                'Trip'
+            ],
+        })
 
         const {data: tripsData} = useQuery(TRIPS_QUERY)
 
@@ -31,7 +38,10 @@ const Trip = () => {
                 <Form.Control className="Input" size="lg" type="text" placeholder="New place"
                               onChange={event => setNewPlace(event.target.value)}/>
 
-                <Button className="Input" variant="primary" type="submit" onSubmit={() => {
+                <Button className="Input" variant="primary" type="submit" onClick={() => {
+                    updatePlace({
+                        variables: {tripId, newPlace}
+                    }).then(r => console.log(r))
                 }}>
                     update place
                 </Button>
@@ -147,5 +157,13 @@ const TRIPS_QUERY = gql`
         }
     }
 `
+
+const UPDATE_PLACE = gql`
+    mutation updatePlace($tripId: ID!, $newPlace: String!) {
+        updatePlace(update: {id: $tripId, place: $newPlace}) {
+            tripId
+        }
+    }
+`;
 
 export default Trip;
