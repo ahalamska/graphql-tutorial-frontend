@@ -142,7 +142,19 @@ const Trip = () => {
     }
 ;
 
+const USER_FRAGMENT = gql`
+    fragment UserFragment on User {
+        id
+        firstName
+        surname
+        gender
+        age
+        email
+    }
+`
+
 const TRIP_QUERY = gql`
+    ${USER_FRAGMENT}
     query Trip($tripId: ID!) {
         trip(id: $tripId) {
             __typename
@@ -155,21 +167,11 @@ const TRIP_QUERY = gql`
                 owner {
                     __typename
                     ... on User {
-                        id
-                        firstName
-                        surname
-                        gender
-                        age
-                        email
+                        ...UserFragment
                     }
                 }
                 participants(limit: 10) {
-                    id
-                    firstName
-                    surname
-                    gender
-                    age
-                    email
+                    ...UserFragment
                 }
             }
             ... on TripNotFound {
