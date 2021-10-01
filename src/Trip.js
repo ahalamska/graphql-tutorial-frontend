@@ -1,21 +1,16 @@
 import React, {useState} from "react";
 import Card from 'react-bootstrap/Card';
 import {Button, Col, Container, Form, Row, Table} from "react-bootstrap";
-import {gql, useLazyQuery, useMutation, useQuery} from "@apollo/client";
+import {gql, useLazyQuery, useMutation, useQuery, useSubscription} from "@apollo/client";
 
 
 const Trip = () => {
         const [tripId, changeTripId] = useState("1")
         const [newPlace, setNewPlace] = useState("1")
 
-        const [getTrip, {loading, error, data}] = //TODO skorzystać z useLazyQuery
+        const [getTrip, {loading, error, data}] = useLazyQuery(TRIP_QUERY);
 
-        const [updatePlace] = useMutation(UPDATE_PLACE, {
-            refetchQueries: [
-                TRIP_QUERY,
-                'Trip'
-            ],
-        })
+        const [updatePlace] = useMutation(UPDATE_PLACE)
 
         const [copyTrip] = useMutation(COPY_TRIP, {
             refetchQueries: [
@@ -23,6 +18,11 @@ const Trip = () => {
                 'Trips'
             ],
         })
+
+        const {data: newPlaceData} = useSubscription(
+            PLACE_SUBSCRIPTION,
+            {variables: {tripId}}
+        );
 
         const {data: tripsData} = useQuery(TRIPS_QUERY)
 
@@ -46,7 +46,7 @@ const Trip = () => {
                 <Button className="Input" variant="primary" type="submit" onClick={() => {
                     updatePlace({
                         variables: {tripId, newPlace}
-                    }).then(r => console.log(r))
+                    })
                 }}>
                     update place
                 </Button>
@@ -72,10 +72,16 @@ const Trip = () => {
                 </Button>
 
                 <Button className="Input" variant="primary" type="submit" onClick={() => {
-                    //TODO call  lazy query
+                    getTrip({
+                        variables: {tripId}
+                    })
                 }}>
                     show trip
                 </Button>
+
+                {newPlaceData &&
+                    <h4 style={{color: "red"}}> {newPlaceData.tripsPlace} </h4>
+                }
 
                 {data?.trip && (
                     <>
@@ -210,6 +216,12 @@ const COPY_TRIP = gql`
         addTrip(trip: $trip) {
             tripId
         }
+    }
+`;
+
+const PLACE_SUBSCRIPTION = gql`
+    subscription tripsPlace($tripId: String!) {
+        tripsPlace(tripId: $tripId)
     }
 `;
 
