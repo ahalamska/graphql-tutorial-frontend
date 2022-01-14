@@ -28,10 +28,10 @@ const Trip = () => {
         return (
             <div>
                 Select trip Id
-                <Form.Control className="Input" as="select" aria-label="select trip" id="floatingSelect"
+                <Form.Control value={tripId} className="Input" as="select" aria-label="select trip" id="floatingSelect"
                               onChange={event => changeTripId(event.target.value)}>
                     {tripsData.trips.map(trip =>
-                        <option value={trip.id}>{trip.id}</option>
+                        <option key={trip.id} value={trip.id}>{trip.id}</option>
                     )}
                 </Form.Control>
 
@@ -94,7 +94,7 @@ const Trip = () => {
                                         <tbody>
                                         {data.trip.participants.map(
                                             participant =>
-                                                <tr>
+                                                <tr key={participant.id}>
                                                     <td>{participant.id}</td>
                                                     <td>{participant.firstName} {participant.surname}</td>
                                                     <td>{participant.gender}</td>
