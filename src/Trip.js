@@ -33,7 +33,7 @@ const Trip = () => {
         return (
             <div>
                 Select trip Id
-                <Form.Control className="Input" as="select" aria-label="select trip" id="floatingSelect"
+                <Form.Control value={tripId} className="Input" as="select" aria-label="select trip" id="floatingSelect"
                               onChange={event => changeTripId(event.target.value)}>
                     {tripsData?.trips?.map(trip =>
                         <option value={trip.id}>{trip.id}</option>
