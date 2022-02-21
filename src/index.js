@@ -4,6 +4,25 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {
+    ApolloClient,
+    InMemoryCache,
+    gql
+} from "@apollo/client";
+
+
+const client = new ApolloClient({
+    uri: 'http://localhost:8080/graphql',
+    cache: new InMemoryCache()
+});
+
+client
+.query({
+    query: gql`
+        #TODO dodać query, aby wyciągała informacje które potrzebuje przygotowana formatka (trip info, owner, participants)
+    `
+})
+.then(result => console.log(result));
 
 ReactDOM.render(
   <React.StrictMode>
